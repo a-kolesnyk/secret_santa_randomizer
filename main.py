@@ -1,19 +1,19 @@
-import random
+from flask import Flask, render_template, request, redirect
 
-names = []
+app = Flask(__name__)
 
-while True:
-    name = input("Enter a name (or type 'done' to finish): ")
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-    if name.lower() == 'done':
-        break
-    else:
-        names.append(name)
+@app.route("/generate_pairs", methods=["POST"])
+def generate_pairs():
+    names = request.form.getlist("names")
 
-random.shuffle(names)
-pairs = [(names[i], names[(i + 1) % len(names)]) for i in range(len(names))]
+    random.shuffle(names)
+    pairs = [(names[i], names[(i + 1) % len(names)]) for i in range(len(names))]
 
-print("Random pairs (circular rotation):")
-for pair in pairs:
-    print(f"{pair[0]} -> {pair[1]}")
+    return render_template("pairs.html", pairs=pairs)
 
+if __name__ == "__main__":
+    app.run(debug=True)
